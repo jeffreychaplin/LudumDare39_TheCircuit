@@ -58,12 +58,14 @@ public class LevelManager : Singleton<LevelManager> {
     public void loadLevel() {
         clearLevel();
 
-        Color32[] levelPixels = levelData.GetPixels32();
-        IntPoint2 dimensions = new IntPoint2(levelData.width, levelData.height);
+        if (levelData) {
+            Color32[] levelPixels = levelData.GetPixels32();
+            IntPoint2 dimensions = new IntPoint2(levelData.width, levelData.height);
 
-        for (int x = 0; x < dimensions.x; x++) {
-            for (int y = 0; y < dimensions.y; y++) {
-                createPrefab(levelPixels[(y * dimensions.x) + x], x, y);
+            for (int x = 0; x < dimensions.x; x++) {
+                for (int y = 0; y < dimensions.y; y++) {
+                    createPrefab(levelPixels[(y * dimensions.x) + x], x, y);
+                }
             }
         }
     }

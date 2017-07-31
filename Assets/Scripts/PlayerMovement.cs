@@ -20,7 +20,6 @@ public class PlayerMovement : MonoBehaviour {
     private Text speedValue;
 
     private GameObject[] jumpLinks;
-    //private GameObject[] players;
 
     private bool isCrashed;
     private bool isCheckPointed;
@@ -34,7 +33,6 @@ public class PlayerMovement : MonoBehaviour {
         targetNode = currentLoop.Node[nodeIndex];
         speedValue = LevelManager.Instance.SpeedValue.GetComponent<Text>();
         jumpLinks = GameObject.FindGameObjectsWithTag("JUMPLINK");
-        //players = GameObject.FindGameObjectsWithTag("PLAYER");
         isCrashed = false;
         isCheckPointed = false;
         isOpponentChangedWires = false;
@@ -63,7 +61,6 @@ public class PlayerMovement : MonoBehaviour {
             SoundManager.Instance.PlayAudioClipFX("checkpoint");
             GameManager.Instance.CurrentSpeed += 0.1f;
             speedValue.text = GameManager.Instance.CurrentSpeed.ToString("0.0");
-            Debug.Log("OnTriggerEnter2D CHECKPOINT! " + GameManager.Instance.CurrentSpeed);
         }
 
         if (isOpponent && !isOpponentChangedWires) {
@@ -73,23 +70,19 @@ public class PlayerMovement : MonoBehaviour {
                     if (randomAction <= 5) {
                         // move to same wire player is currently on.
                         currentLoopIndex = GameManager.Instance.PlayerLoopIndex < currentLoopIndex ? Mathf.Max(0, currentLoopIndex - 1) : Mathf.Min(2, currentLoopIndex + 1);
-                        Debug.Log("OnTriggerStay2D move to player wire " + GameManager.Instance.PlayerLoopIndex + " < " + currentLoopIndex + " randomaction= " + randomAction);
                     }
                     else if (randomAction <= 10) {
                         // move toward random wire.
                         currentLoopIndex = Random.Range(0, 2) < currentLoopIndex ? Mathf.Max(0, currentLoopIndex - 1) : Mathf.Min(2, currentLoopIndex + 1);
-                        Debug.Log("OnTriggerStay2D move toward wire " + GameManager.Instance.PlayerLoopIndex + " < " + currentLoopIndex + " randomaction= " + randomAction);
                     }
                     currentLoop = LevelManager.Instance.LoopNodeList[currentLoopIndex];
                     targetNode = currentLoop.Node[nodeIndex];
                 }
-                //Debug.Log("OnTriggerStay2D isOpponent " + currentLoopIndex + " randomaction= "  + randomAction);
             }
             isOpponentChangedWires = true;
         }
 
         if (!isOpponent && other.gameObject.tag == "OPPONENT" && !isCrashed) {
-            Debug.Log("OnTriggerStay2D CRASH! " + currentLoopIndex);
             isCrashed = true;
             SoundManager.Instance.PlayAudioClipFX("crash");
             GameManager.Instance.PowerRemaining = Mathf.Max(0f, GameManager.Instance.PowerRemaining - 0.1f);
@@ -98,11 +91,8 @@ public class PlayerMovement : MonoBehaviour {
 
     void OnTriggerStay2D(Collider2D other) {
         if (!isOpponent && other.gameObject.layer == 8) {
-
             if (other.gameObject.tag == "JUMPLINK") {
-
                 JumpLink jumpLink = other.GetComponent<JumpLink>();
-
                 currentLoopIndex = jumpLink.NextLoopNumber;
                 GameManager.Instance.PlayerLoopIndex = currentLoopIndex;
                 currentLoop = LevelManager.Instance.LoopNodeList[currentLoopIndex];
@@ -112,9 +102,6 @@ public class PlayerMovement : MonoBehaviour {
                 jumpLink.layer = 0; // Default;
             }
         }
-        
-        //batteryLevel = Mathf.Min(batteryLevel + rechargeRate * Time.deltaTime, 100.0F);
-
     }
 
     void OnTriggerExit2D(Collider2D other) {

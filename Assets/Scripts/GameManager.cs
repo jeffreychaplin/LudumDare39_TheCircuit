@@ -12,6 +12,9 @@ public class GameManager : Singleton<GameManager> {
     private GameObject gameMenu;
 
     [SerializeField]
+    private GameObject gamePausedMenu;
+
+    [SerializeField]
     private float currentSpeed;
 
     private GameObject player;
@@ -24,6 +27,7 @@ public class GameManager : Singleton<GameManager> {
 
     public GameObject Player { get { return player; } set { player = value; } }
     public GameObject GameMenu { get { return gameMenu; } set { gameMenu = value; } }
+    public GameObject GamePausedMenu { get { return gamePausedMenu; } set { gamePausedMenu = value; } }
     public int PlayerLoopIndex { get { return playerLoopIndex; } set { playerLoopIndex = value; } }
     public float CurrentSpeed { get { return currentSpeed; } set { currentSpeed = Mathf.Min(40.0f, value); } }
     public float PowerRemaining {
@@ -37,7 +41,6 @@ public class GameManager : Singleton<GameManager> {
                 Debug.Log("GAME OVER MAN");
                 Time.timeScale = 0;
                 GameMenu.SetActive(true);
-                //GameRestart();
             }
         }
     }
@@ -48,7 +51,6 @@ public class GameManager : Singleton<GameManager> {
         PowerRemaining = 1.0f;
         percentGaugeScaleOriginal = percentGauge.transform.localScale;
         percentGaugeSpriteRenderer = percentGauge.GetComponent<SpriteRenderer>();
-
         electricities = GameObject.FindGameObjectsWithTag("ELECTRICITY");
         RandomlyTurnOnSparks(1);
     }
@@ -58,11 +60,9 @@ public class GameManager : Singleton<GameManager> {
         GameEscape();
     }
 
-
     public bool RandomizeBool() {
         return (Random.value >= 0.5);
     }
-
 
     public void RandomlyTurnOnSparks(int count) {
         GameExtensions.Fisher_Yates_CardDeck_Shuffle(electricities);
@@ -72,10 +72,15 @@ public class GameManager : Singleton<GameManager> {
         }
     }
 
-    private void GameEscape() {
-        if (Input.GetKeyDown(KeyCode.Escape)) {
+    private void GameEscape(bool forceEscape = false) {
+        if (Input.GetKeyDown(KeyCode.Escape) || forceEscape) {
             Time.timeScale = Time.timeScale == 1.0f ? 0 : 1.0f;
+            GamePausedMenu.SetActive(Time.timeScale == 0);
         }
+    }
+
+    public void GamResume() {
+        GameEscape(true);
     }
 
     public void GameRestart() {
