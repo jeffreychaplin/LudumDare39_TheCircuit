@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour {
     private bool isCrashed;
     private bool isCheckPointed;
     private bool isOpponentChangedWires;
+    private bool isReady;
 
     // Use this for initialization
     void Start () {
@@ -36,6 +37,7 @@ public class PlayerMovement : MonoBehaviour {
         isCrashed = false;
         isCheckPointed = false;
         isOpponentChangedWires = false;
+        isReady = false;
     }
 	
 	// Update is called once per frame
@@ -85,7 +87,9 @@ public class PlayerMovement : MonoBehaviour {
         if (!isOpponent && other.gameObject.tag == "OPPONENT" && !isCrashed) {
             isCrashed = true;
             SoundManager.Instance.PlayAudioClipFX("crash");
-            GameManager.Instance.PowerRemaining = Mathf.Max(0f, GameManager.Instance.PowerRemaining - 0.1f);
+            if (isReady) {
+                GameManager.Instance.PowerRemaining = Mathf.Max(0f, GameManager.Instance.PowerRemaining - 0.1f);
+            }
         }
     }
 
@@ -108,6 +112,7 @@ public class PlayerMovement : MonoBehaviour {
         isCrashed = false;
         isCheckPointed = false;
         isOpponentChangedWires = false;
+        isReady = true;
     }
 
  }
